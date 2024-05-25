@@ -1,3 +1,28 @@
+<script setup>
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+let form = ref([]);
+let allcustomers = ref([]);
+let customer_id = ref([]);
+
+onMounted(async () => {
+    indexForm()
+    getAllCustomers()
+})
+
+const indexForm = async () => {
+    let response = await axios.get('/api/create_invoice')
+    // console.log('form', response.data)
+    form.value = response.data
+}
+
+const getAllCustomers = async () => {
+    let response = await axios.get('/api/customers')
+    // console.log('response', response)
+    allcustomers.value = response.data.customers
+}
+</script>
+
 <template>
     <div class="container">
         <!--==================== NEW INVOICE ====================-->
@@ -16,21 +41,22 @@
                 <div class="card__content--header">
                     <div>
                         <p class="my-1">Customer</p>
-                        <select name="" id="" class="input">
-                            <option value="">cust 1</option>
+                        <select name="" id="" class="input" v-model="customer_id">
+                            <option disabled>Select customer</option>
+                            <option :value="customer.id" v-for="customer in allcustomers" :key="customer.id">{{customer.firstname}}</option>
                         </select>
                     </div>
                     <div>
                         <p class="my-1">Date</p>
-                        <input id="date" placeholder="dd-mm-yyyy" type="date" class="input"> <!---->
+                        <input id="date" placeholder="dd-mm-yyyy" type="date" class="input" v-model="form.date"> <!---->
                         <p class="my-1">Due Date</p>
-                        <input id="due_date" type="date" class="input">
+                        <input id="due_date" type="date" class="input" v-model="form.due_date">
                     </div>
                     <div>
                         <p class="my-1">Numero</p>
-                        <input type="text" class="input">
+                        <input type="text" class="input" v-model="form.number">
                         <p class="my-1">Reference(Optional)</p>
-                        <input type="text" class="input">
+                        <input type="text" class="input" v-model="form.reference">
                     </div>
                 </div>
                 <br><br>
