@@ -4,6 +4,10 @@ import { onMounted, ref } from 'vue';
 let form = ref([]);
 let allcustomers = ref([]);
 let customer_id = ref([]);
+let item = ref([])
+let listCart = ref([])
+const showModal = ref(false)
+const hideModal = ref(true)
 
 onMounted(async () => {
     indexForm()
@@ -20,6 +24,25 @@ const getAllCustomers = async () => {
     let response = await axios.get('/api/customers')
     // console.log('response', response)
     allcustomers.value = response.data.customers
+}
+
+const addCart = (item) => {
+    const itemcart = {
+        id: item.id,
+        item_code: item.item_code,
+        description: item.description,
+        unit_price: item.unit_price,
+        quantity: item.quantity,
+    }
+    listCart.value.push(itemcart)
+}
+
+const openModel = () => {
+    showModal.value = !showModal.value
+}
+
+const closeModal = () => {
+    showModal.value = !hideModal.value
 }
 </script>
 
@@ -43,7 +66,8 @@ const getAllCustomers = async () => {
                         <p class="my-1">Customer</p>
                         <select name="" id="" class="input" v-model="customer_id">
                             <option disabled>Select customer</option>
-                            <option :value="customer.id" v-for="customer in allcustomers" :key="customer.id">{{customer.firstname}}</option>
+                            <option :value="customer.id" v-for="customer in allcustomers" :key="customer.id">
+                                {{ customer.firstname }}</option>
                         </select>
                     </div>
                     <div>
@@ -71,23 +95,24 @@ const getAllCustomers = async () => {
                     </div>
 
                     <!-- item 1 -->
-                    <div class="table--items2">
-                        <p>#093654 vjxhchkvhxc vkxckvjkxc jkvjxckvjkx </p>
+                    <div class="table--items2" v-for="(itemcart, i) in listCart" :key="itemcart.id">
+                        <p>#{{itemcart.item_code}} {{itemcart.description}}</p>
                         <p>
-                            <input type="text" class="input">
+                            <input type="text" class="input" v-model="itemcart.unit_price">
                         </p>
                         <p>
-                            <input type="text" class="input">
+                            <input type="text" class="input" v-model="itemcart.quantity">
                         </p>
-                        <p>
-                            $ 10000
+                        <p v-if="itemcart.quantity">
+                            $ {{ (itemcart.quantity)*(itemcart.unit_price) }}
                         </p>
+                        <p v-else></p>
                         <p style="color: red; font-size: 24px;cursor: pointer;">
                             &times;
                         </p>
                     </div>
                     <div style="padding: 10px 30px !important;">
-                        <button class="btn btn-sm btn__open--modal">Add New Line</button>
+                        <button class="btn btn-sm btn__open--modal" @click="openModel()">Add New Line</button>
                     </div>
                 </div>
 
@@ -127,9 +152,9 @@ const getAllCustomers = async () => {
 
         </div>
         <!--==================== add modal items ====================-->
-        <div class="modal main__modal ">
+        <div class="modal main__modal " :class="{ show: showModal }">
             <div class="modal__content">
-                <span class="modal__close btn__close--modal">×</span>
+                <span class="modal__close btn__close--modal" @click="closeModal()">×</span>
                 <h3 class="modal__title">Add Item</h3>
                 <hr><br>
                 <div class="modal__items">
@@ -141,7 +166,7 @@ const getAllCustomers = async () => {
                 <br>
                 <hr>
                 <div class="model__footer">
-                    <button class="btn btn-light mr-2 btn__close--modal">
+                    <button class="btn btn-light mr-2 btn__close--modal" @click="closeModal()">
                         Cancel
                     </button>
                     <button class="btn btn-light btn__close--modal ">Save</button>
