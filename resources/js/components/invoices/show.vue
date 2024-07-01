@@ -1,5 +1,8 @@
 <script setup>
 import { onMounted, ref } from "vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 let form = ref({ id: "" });
 
@@ -22,7 +25,11 @@ const getInvoice = async () => {
 const print = () => {
     window.print()
     router.push('/').catch(() => {})
-}
+};
+
+const onEdit = (id) => {
+    router.push('/invoice/edit/'+id)
+};
 </script>
 
 <template>
@@ -53,7 +60,7 @@ const print = () => {
                         </li>
                         <li>
                             <!-- Select Btn Option -->
-                            <button class="selectBtnFlat">
+                            <button class="selectBtnFlat" @click="onEdit(form.id)">
                                 <i class="fas fa-reply"></i>
                                 Edit
                             </button>
