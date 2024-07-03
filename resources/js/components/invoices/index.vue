@@ -14,19 +14,19 @@ onMounted(async () => {
 
 const getInvoices = async () => {
     let response = await axios.get("/api/get_all_invoice");
-    console.log('response', response)
+    // console.log('response', response)
     invoices.value = response.data.invoices;
 }
 
 const search = async () => {
     let response =  await axios.get('/api/search_invoice?s='+searchInvoice.value);
-    console.log('response', response.data.invoices)
+    // console.log('response', response.data.invoices)
     invoices.value = response.data.invoices;
 }
 
 const newInvoice = async () => {
     let form = await axios.get("/api/create_invoice")
-    console.log('form', form.data);
+    // console.log('form', form.data);
     router.push('/invoice/new')
 }
 
